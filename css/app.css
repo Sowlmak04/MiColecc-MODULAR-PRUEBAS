@@ -1,0 +1,627 @@
+  
+    :root{
+      --primary: #4a90e2;
+      --primary-contrast: #ffffff;
+      --muted: #c9cdd6;
+      --card: #ffffff;
+      --fg: #111111;
+      --shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    body.dark-theme{
+      --card: #777;
+      --fg: #ffffff;
+      --muted: #666;
+      --shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+  
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f5;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #4a90e2;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #4a90e2;
+      color: white;
+      padding: 15px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 300px;
+      height: 50px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .button.save-btn {
+      background-color: #27ae60;
+    }
+
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .item {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px auto;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      max-width: 500px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;  /* Centra los elementos */
+      text-align: center;  /* Centra el texto */
+      position: relative; /* Necesario para que el botón X se posicione correctamente */
+    }
+
+    
+    .cover-preview-modal {
+      width: 150px;  /* Tamaño de la imagen */
+      height: auto;
+      margin-top: 10px;
+      object-fit: cover;
+      display: block;  /* Asegura que la imagen esté centrada */
+      margin-left: auto;  /* Centra la imagen horizontalmente */
+      margin-right: auto; /* Centra la imagen horizontalmente */
+    }
+
+    
+    .close {
+      color: #aaa;
+      font-size: 54px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute; /* Esto permite moverlo fuera del flujo normal */
+      top: 10px; /* Distancia desde la parte superior */
+      right: 10px; /* Distancia desde el borde derecho */
+    }
+
+    
+    .modal-buttons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 10px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #f5a623;
+      color: white;
+    }
+
+    .save-btn {
+      background-color: #27ae60;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #d0021b;
+      color: white;
+    }
+
+    .image-preview {
+      margin-top: 10px;
+      max-width: 100%;
+      max-height: 200px;
+      display: none;
+    }
+
+    
+
+   
+   
+    /* Vista tipo portada */
+    .cover-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .cover-grid img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+  .toggle-view-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+
+.toggle-view-btn:hover {
+  transform: scale(1.1);
+}
+  
+    body.dark-theme {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+}
+
+body.dark-theme .button {
+  background-color: #555 !important;
+  color: white !important;
+}
+
+
+body.dark-theme .item,
+body.dark-theme form,
+body.dark-theme .modal-content {
+  background-color: #777 !important;
+  color: white;
+}
+
+
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+  background-color: #444;
+  color: white;
+  border-color: #666;
+}
+
+/* Botón fijo de paleta */
+.toggle-theme-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: auto;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+
+.toggle-theme-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Color del icono en modo claro/oscuro */
+.toggle-theme-btn { color: #4a90e2; }
+body.dark-theme .toggle-theme-btn { color: #f0f0f0; }
+
+/* Icono de cambio de vista en blanco para modo oscuro */
+body.dark-theme .toggle-view-btn {
+  color: #ffffff;
+}
+
+/* Enlaces en negrita, azul claro y siempre subrayados en el modal con tema oscuro */
+body.dark-theme .modal-content a {
+  color: #6FA8DC !important;
+  font-weight: bold !important;
+  text-decoration: underline !important;
+}
+
+body.dark-theme .modal-content a:hover {
+  opacity: 0.9;
+}
+
+.category-header {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 25px; /* ahora 25px de separación */
+  text-align: center;
+}
+
+
+.category-header h2 {
+  margin: 0;
+  display: inline-block; /* para que text-align funcione bien */
+  font-size: 36px;       /* nuevo: texto más grande */
+}
+
+
+#itemList {
+  margin-top: 15px;
+}
+
+
+/* Modal de confirmación centrado */
+#confirmDeleteModal .modal-content {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
+#confirmDeleteModal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#categoryItemCount {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: 16px;     /* aire con ítems */
+  margin-bottom: 6px;   /* menos aire antes de paginación */
+  color: #000;
+}
+
+body.dark-theme #categoryItemCount {
+  color: #fff;
+}
+
+
+
+/* Botón volver */
+.back-btn {
+  text-align: center;
+  margin: 12px 0 20px;  /* equilibrado: poco aire arriba, un poco abajo */
+}
+
+.back-btn .button {
+  padding: 12px 28px;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+/* ===== Añadir Ítem: contener y centrar correctamente ===== */
+#addScreen form {
+  max-width: 560px;      /* tarjeta más estrecha y centrada */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+#addScreen form input,
+#addScreen form select,
+#addScreen form textarea,
+#addScreen form button {
+  width: 100%;
+  box-sizing: border-box; /* incluye paddings/bordes en el ancho */
+}
+
+#addScreen form {
+  display: grid;
+  gap: 12px;
+}
+
+#addScreen form input[type="file"] {
+  padding: 8px;
+}
+
+#addScreen form .save-btn {
+  width: 100%;
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ===== Barra de filtros en categoría ===== */
+.filters-bar {
+  width: 100%;
+  max-width: 500px;
+  margin: 10px auto 0;
+  background: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: none;                 /* <- oculta por defecto */
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.filters-bar input,
+.filters-bar select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+.filters-actions {
+  grid-column: 1 / -1; /* botones a lo ancho */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 420px) {
+  .filters-bar { grid-template-columns: 1fr; }
+  .filters-actions { grid-template-columns: 1fr 1fr; }
+}
+
+/* Tema oscuro */
+body.dark-theme .filters-bar {
+  background: #777 !important;
+  color: #fff;
+}
+body.dark-theme .filters-bar input,
+body.dark-theme .filters-bar select {
+  background: #444;
+  color: #fff;
+  border-color: #666;
+}
+
+/* ===== Home: cuadrícula de categorías (2×3) y acciones ===== */
+#categoryButtons {
+  max-width: 560px;
+  margin: 20px auto 0;  
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+#categoryButtons .cat-tile {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;   /* ← Fuerza mayúsculas */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+#homeActions {
+  max-width: 560px;
+  margin: 24px auto 0;         /* separación clara con la rejilla */
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#homeActions .action-btn {
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;          /* más pequeños que las categorías */
+  min-width: 130px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Tema oscuro */
+body.dark-theme #categoryButtons .cat-tile,
+body.dark-theme #homeActions .action-btn {
+  background-color: #555 !important;
+  color: #fff !important;
+}
+
+#homeScreen {
+  padding-bottom: 40px;  /* deja aire abajo antes del borde y del icono 🎨/🌙 */
+}
+
+#paginationControls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+#paginationControls select{
+  width:auto;
+  max-width:140px;
+  min-width:100px;
+}
+
+#paginationControls .page-btn{
+  min-width:36px;
+  height:36px;
+  padding:0 10px;
+  font-size:.9rem;
+  border:0;
+  border-radius:6px;
+  cursor:pointer;
+  background: var(--primary);
+  color: var(--primary-contrast);
+  box-shadow: var(--shadow);
+  transition: transform .08s ease, opacity .2s ease, background .2s ease;
+}
+#paginationControls .page-btn:hover:not(:disabled){ transform: translateY(-1px); }
+#paginationControls .page-btn:active:not(:disabled){ transform: translateY(0); }
+#paginationControls .page-btn:disabled{
+  cursor: default;
+  opacity: .55;
+  background: color-mix(in srgb, var(--primary) 30%, var(--muted) 70%);
+}
+
+#paginationControls .page-select{
+  height:36px;
+  min-width:110px;
+  max-width:140px;
+  padding:4px 6px;
+  border-radius:6px;
+  border:1px solid var(--muted);
+  background:var(--card);
+  color:var(--fg);
+  box-shadow:var(--shadow);
+  font-size:.9rem;
+  flex:0 0 auto;
+
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  background-image:none;
+
+  text-align:center;
+  text-align-last:center;
+  -moz-text-align-last:center;
+}
+#paginationControls .page-select::-ms-expand{ display:none; }
+#paginationControls .page-select:focus{
+  outline: 3px solid #8ec6ff;
+  outline-offset: 1px;
+}
+
+/* ===== Variantes de botón (modal / acciones) ===== */
+.button.secondary {
+  background: var(--muted);
+  color: var(--fg);
+  border: 1px solid var(--muted);
+  box-shadow: none;
+}
+
+.button.secondary:hover {
+  opacity: .92;
+}
+
+.button.danger {
+  background: #d64545;
+  color: #fff;
+  border: 1px solid #d64545;
+  box-shadow: var(--shadow);
+}
+
+.button.danger:hover {
+  opacity: .92;
+}
+
+/* ===== Botones dentro de modales: evitar que .button (home) rompa el layout ===== */
+.modal .modal-buttons .button{
+  width: auto;        /* quita el 90% */
+  max-width: none;    /* quita el tope de 300px */
+  margin: 0;          /* quita margin auto */
+  height: auto;       /* quita height fijo */
+  padding: 10px;      /* consistente con modal */
+  flex: 1;            /* respeta el flex de modal-buttons */
+}
+
+/* ===== Toast (feedback no intrusivo) ===== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  max-width: min(92vw, 520px);
+  box-shadow: var(--shadow);
+  
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--muted);
+  
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+  border-color: color-mix(in srgb, #22c55e 55%, var(--muted) 45%);
+}
+
+.toast.error {
+  border-color: color-mix(in srgb, #ef4444 55%, var(--muted) 45%);
+}
+
+.subcat-inline {
+  opacity: .9;
+}
