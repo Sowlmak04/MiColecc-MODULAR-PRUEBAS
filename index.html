@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mi Colección">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Colección</title>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  
+    
+    <div id="homeScreen" class="screen active">
+  <div id="categoryButtons"></div>
+</div>
+
+<div id="addScreen" class="screen">
+  <h2>Añadir Ítem</h2>
+  <form id="addItemForm">
+    <input type="text" id="title" placeholder="Título" required />
+    <select id="type" required>
+    <option value="" disabled selected>Selecciona una categoría</option>
+    </select>
+       
+    <select id="subcategory" style="display:none;">
+    <option value="" disabled selected>Selecciona una subcategoría</option>
+    <option value="Funkos">Funkos</option>
+    <option value="Lego">Lego</option>
+    <option value="Otros">Otros</option>
+    </select>
+
+    <input type="text" id="author" placeholder="Autor / Director / Artista" />
+    <input type="text" id="format" placeholder="Formato" />
+    <input type="text" id="genre"  placeholder="Género" />
+    <input type="text" id="year"   placeholder="Año" inputmode="numeric" />
+    <textarea id="notes" placeholder="Notas (opcional)"></textarea>
+    <input type="file" id="coverImage" accept="image/*" />
+    <img id="coverPreview" class="image-preview" alt="Vista previa de la portada" />
+    <!-- Campo "Más info" -->
+    <input type="text" id="moreInfo" placeholder="Más info (URL)" />
+    <button type="submit" class="button save-btn">Guardar</button>
+  </form>
+
+  <div class="back-btn">
+    <button class="button" onclick="showScreen('homeScreen')">Volver</button>
+  </div>
+</div>
+
+<div id="categoryScreen" class="screen">
+  <div class="category-header" style="display: flex; align-items: center; justify-content: space-between; max-width: 500px; margin: 0 auto; position: relative;">
+    <h2 id="categoryTitle" style="margin: 0; flex: 1; text-align: center;"></h2>
+    <button onclick="toggleSearch()" class="search-btn" title="Buscar">🔍</button>
+  </div>
+
+
+ <div id="filtersBar" class="filters-bar" style="display:none;">
+  <input type="text" id="filterText" placeholder="Título" />
+  <input type="text" id="filterAuthor" placeholder="Autor / Director / Artista" />
+  <select id="filterFormat">
+    <option value="">Todos los formatos</option>
+  </select>
+  <select id="filterGenre">
+    <option value="">Todos los géneros</option>
+  </select>
+  <select id="filterYear">
+    <option value="">Todos los años</option>
+  </select>
+
+  <!-- 👇 NUEVO: solo se mostrará en la categoría 'Otros' -->
+  <div id="filterSubcatWrap" style="display:none;">
+    <select id="filterSubcategory">
+      <option value="">Todas las subcategorías</option>
+      <option value="Funkos">Funkos</option>
+      <option value="Lego">Lego</option>
+      <option value="Otros">Otros</option>
+    </select>
+  </div>
+  <!-- 👆 FIN NUEVO -->
+
+  <div class="filters-actions">
+    <button type="button" class="button" id="applyFiltersBtn">Aplicar</button>
+    <button type="button" class="button" id="clearFiltersBtn">Limpiar</button>
+  </div>
+</div>
+ 
+<div id="itemList"></div>
+
+<p id="categoryItemCount"></p>
+
+<div id="paginationControls"></div>
+
+
+<div class="back-btn">
+  <button class="button" onclick="showScreen('homeScreen')">Volver</button>
+</div>
+
+<!-- Botón fijo de cambiar vista -->
+<button class="toggle-view-btn" onclick="toggleView()" title="Cambiar vista">👁</button>
+
+</div> <!-- Cierra #categoryScreen -->
+
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+
+
+<div id="confirmDeleteModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeConfirmDeleteModal()">×</span>
+    <p style="margin-bottom: 20px;">¿Estás seguro de que quieres eliminar este ítem?</p>
+    <div class="modal-buttons">
+      <button type="button" class="button danger" onclick="confirmDelete()">Sí, eliminar</button>
+      <button type="button" class="button secondary" onclick="closeConfirmDeleteModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Exportar -->
+<div id="exportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeExportModal()">×</span>
+    <h3 style="margin-top:0;">Exportar</h3>
+    <p style="margin-top:0; opacity:.85;">Elige qué categoría exportar</p>
+    <div id="exportOptions" class="modal-buttons" style="flex-direction:column; width:100%; gap:10px;"></div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Importación -->
+<div id="importConfirmModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeImportConfirmModal()">×</span>
+    <h3 style="margin-top:0;">Confirmar importación</h3>
+    <p id="importConfirmText" style="margin-top:0; opacity:.9; text-align:left;"></p>
+    <div class="modal-buttons" style="width:100%;">
+      <button type="button" class="button save-btn" id="importConfirmOkBtn">Continuar</button>
+      <button type="button" class="button secondary" onclick="closeImportConfirmModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Marcador temporal para validar la actualización del Service Worker -->
+<div id="updateTestBadge" style="position:fixed; top:8px; left:8px; z-index:9999; font-size:11px; padding:4px 7px; border-radius:8px; background:rgba(0,0,0,.55); color:#fff; pointer-events:none;">MODULAR v2</div>
+
+<!-- Botón fijo de cambiar tema -->
+<button id="themeBtn" onclick="toggleTheme()" class="toggle-theme-btn" title="Cambiar tema">
+  🌙
+</button>
+<input type="file" id="importExcelInput" accept=".xlsx,.xls" style="display:none" />
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+
+<script src="./js/app.js"></script>
+
+<script src="./js/sw-register.js"></script>
+
+</body>
+</html>
+
+
+
