@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mi Colección">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Colección</title>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <header class="minimal-topbar">
+    <div class="minimal-topbar-inner">
+      <span class="home-context" aria-hidden="true"></span>
+      <button id="menuBtn" class="menu-btn" type="button" onclick="toggleAppMenu()" aria-label="Abrir menú" aria-expanded="false">•••</button>
+    </div>
+  </header>
+
+  <div id="menuBackdrop" class="menu-backdrop" onclick="toggleAppMenu(false)"></div>
+  <nav id="appMenu" class="app-menu" aria-label="Menú de aplicación">
+    <div class="menu-grabber" aria-hidden="true"></div>
+    <button type="button" class="menu-row" onclick="toggleAppMenu(false); showScreen('addScreen')"><span class="menu-symbol">＋</span><span>Añadir elemento</span></button>
+    <div class="menu-separator"></div>
+    <button type="button" class="menu-row" onclick="toggleAppMenu(false); document.getElementById('importExcelInput').click()"><span class="menu-symbol">⇧</span><span>Importar</span></button>
+    <button type="button" class="menu-row" onclick="toggleAppMenu(false); openExportMenu()"><span class="menu-symbol">⇩</span><span>Exportar</span></button>
+    <div class="menu-separator"></div>
+    <button type="button" class="menu-row" onclick="openSettingsPanel('appearanceModal')"><span class="menu-symbol">◐</span><span>Personalización</span><span class="menu-chevron">›</span></button>
+    <button type="button" class="menu-row" onclick="openSettingsPanel('infoModal')"><span class="menu-symbol">ⓘ</span><span>Información</span><span class="menu-chevron">›</span></button>
+  </nav>
+
+  <main class="app-shell">
+    <div id="homeScreen" class="screen active">
+      <div id="categoryButtons"></div>
+    </div>
+
+<div id="addScreen" class="screen">
+  <h2>Añadir elemento</h2>
+  <form id="addItemForm">
+    <input type="text" id="title" placeholder="Título" required />
+    <select id="type" required>
+    <option value="" disabled selected>Selecciona una categoría</option>
+    </select>
+       
+    <select id="subcategory" style="display:none;">
+    <option value="" disabled selected>Selecciona una subcategoría</option>
+    <option value="Funkos">Funkos</option>
+    <option value="Lego">Lego</option>
+    <option value="Otros">Otros</option>
+    </select>
+
+    <input type="text" id="author" placeholder="Autor / Director / Artista" />
+    <input type="text" id="format" placeholder="Formato" />
+    <input type="text" id="genre"  placeholder="Género" />
+    <input type="text" id="year"   placeholder="Año" inputmode="numeric" />
+    <textarea id="notes" placeholder="Notas (opcional)"></textarea>
+    <input type="file" id="coverImage" accept="image/*" />
+    <img id="coverPreview" class="image-preview" alt="Vista previa de la portada" />
+    <!-- Campo "Más info" -->
+    <input type="text" id="moreInfo" placeholder="Más info (URL)" />
+    <button type="submit" class="button save-btn">Guardar</button>
+  </form>
+
+  <div class="back-btn">
+    <button class="button" onclick="showScreen('homeScreen')">Volver</button>
+  </div>
+</div>
+
+<div id="categoryScreen" class="screen">
+  <div class="category-header">
+    <button type="button" class="category-nav-btn category-back-btn" onclick="showScreen('homeScreen')" title="Volver" aria-label="Volver">‹</button>
+    <h2 id="categoryTitle"></h2>
+    <div class="category-tools">
+      <button type="button" onclick="toggleSearch()" class="search-btn category-nav-btn" title="Buscar" aria-label="Buscar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+      </button>
+      <button type="button" onclick="toggleFilters()" class="filter-btn category-nav-btn" title="Filtros" aria-label="Filtros">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>
+        <span id="filterBadge" class="filter-badge" hidden></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="searchBar" class="search-panel" style="display:none;">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+    <input type="search" id="searchText" placeholder="Buscar por título o autor…" autocomplete="off" enterkeyhint="search" />
+    <button type="button" id="clearSearchBtn" class="clear-search-btn" aria-label="Limpiar búsqueda">×</button>
+  </div>
+
+ <div id="filtersBar" class="filters-bar" style="display:none;">
+  <select id="filterFormat">
+    <option value="">Todos los formatos</option>
+  </select>
+  <select id="filterGenre">
+    <option value="">Todos los géneros</option>
+  </select>
+  <select id="filterYear">
+    <option value="">Todos los años</option>
+  </select>
+
+  <!-- 👇 NUEVO: solo se mostrará en la categoría 'Otros' -->
+  <div id="filterSubcatWrap" style="display:none;">
+    <select id="filterSubcategory">
+      <option value="">Todas las subcategorías</option>
+      <option value="Funkos">Funkos</option>
+      <option value="Lego">Lego</option>
+      <option value="Otros">Otros</option>
+    </select>
+  </div>
+  <!-- 👆 FIN NUEVO -->
+
+  <div class="filters-actions">
+    <button type="button" class="button" id="applyFiltersBtn">Aplicar</button>
+    <button type="button" class="button" id="clearFiltersBtn">Limpiar</button>
+  </div>
+</div>
+ 
+<div id="itemList"></div>
+
+<p id="categoryItemCount"></p>
+
+<div id="paginationControls"></div>
+
+
+<div class="back-btn category-bottom-back">
+  <button class="button" onclick="showScreen('homeScreen')">Volver</button>
+</div>
+
+<!-- Botón fijo de cambiar vista -->
+<button class="toggle-view-btn" onclick="toggleView()" title="Cambiar vista" aria-label="Cambiar vista">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="6" height="6" rx="1"></rect><rect x="14" y="5" width="6" height="6" rx="1"></rect><rect x="4" y="15" width="6" height="4" rx="1"></rect><rect x="14" y="15" width="6" height="4" rx="1"></rect></svg>
+</button>
+
+</div> <!-- Cierra #categoryScreen -->
+
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+
+
+<div id="confirmDeleteModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeConfirmDeleteModal()">×</span>
+    <p style="margin-bottom: 20px;">¿Estás seguro de que quieres eliminar este ítem?</p>
+    <div class="modal-buttons">
+      <button type="button" class="button danger" onclick="confirmDelete()">Sí, eliminar</button>
+      <button type="button" class="button secondary" onclick="closeConfirmDeleteModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Exportar -->
+<div id="exportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeExportModal()">×</span>
+    <h3 style="margin-top:0;">Exportar</h3>
+    <p style="margin-top:0; opacity:.85;">Elige qué categoría exportar</p>
+    <div id="exportOptions" class="modal-buttons" style="flex-direction:column; width:100%; gap:10px;"></div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Importación -->
+<div id="importConfirmModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeImportConfirmModal()">×</span>
+    <h3 style="margin-top:0;">Confirmar importación</h3>
+    <p id="importConfirmText" style="margin-top:0; opacity:.9; text-align:left;"></p>
+    <div class="modal-buttons" style="width:100%;">
+      <button type="button" class="button save-btn" id="importConfirmOkBtn">Continuar</button>
+      <button type="button" class="button secondary" onclick="closeImportConfirmModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="appearanceModal" class="modal">
+  <div class="modal-content settings-panel">
+    <span class="close" onclick="document.getElementById('appearanceModal').style.display='none'">×</span>
+    <div class="settings-heading">
+      <span class="settings-eyebrow">Apariencia</span>
+      <h3>Personalización</h3>
+    </div>
+    <div class="settings-section">
+      <span class="settings-label">Modo</span>
+      <div class="segmented-control">
+        <button type="button" data-appearance="auto" onclick="setAppearanceMode('auto')">Automático</button>
+        <button type="button" data-appearance="light" onclick="setAppearanceMode('light')">Claro</button>
+        <button type="button" data-appearance="dark" onclick="setAppearanceMode('dark')">Oscuro</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <span class="settings-label">Color de acento</span>
+      <div class="accent-picker" aria-label="Color de acento">
+        <button type="button" data-accent="blue" onclick="setAccentColor('blue')" aria-label="Azul"><span></span></button>
+        <button type="button" data-accent="indigo" onclick="setAccentColor('indigo')" aria-label="Índigo"><span></span></button>
+        <button type="button" data-accent="forest" onclick="setAccentColor('forest')" aria-label="Verde bosque"><span></span></button>
+        <button type="button" data-accent="burgundy" onclick="setAccentColor('burgundy')" aria-label="Burdeos"><span></span></button>
+        <button type="button" data-accent="graphite" onclick="setAccentColor('graphite')" aria-label="Grafito"><span></span></button>
+      </div>
+    </div>
+    <p class="settings-note">El modo Automático sigue la apariencia del dispositivo.</p>
+  </div>
+</div>
+
+<div id="infoModal" class="modal">
+  <div class="modal-content info-panel">
+    <span class="close" onclick="document.getElementById('infoModal').style.display='none'">×</span>
+    <div class="info-mark">MC</div>
+    <h3>Mi Colección</h3>
+    <p>Colección personal</p>
+    <div class="version-row"><span>Versión</span><strong>2.3.5</strong></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</main>
+<input type="file" id="importExcelInput" accept=".xlsx,.xls" style="display:none" />
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+
+<script src="./js/core.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/io.js"></script>
+
+<script src="./js/sw-register.js"></script>
+
+</body>
+</html>
+
+
+
